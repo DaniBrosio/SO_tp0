@@ -6,6 +6,7 @@
  */
 
 #include "tp0.h"
+#include <string.h>
 
 int main(void)
 {
@@ -20,9 +21,15 @@ int main(void)
 	logger = iniciar_logger();
 
 	//Loggear "soy un log"
+	log_trace(logger,"soy un log");
 
 	config = leer_config();
 
+	//Aplicar configuraciones
+	strcpy(ip, config_get_string_value(config,"IP"));
+	strcpy(puerto, config_get_string_value(config,"PUERTO"));
+
+	printf("ip: %s\tpuerto: %s",ip,puerto);
 
 	/*---------------------------------------------------PARTE 3-------------------------------------------------------------*/
 
@@ -39,20 +46,21 @@ int main(void)
 	terminar_programa(conexion, logger, config);
 }
 
-//TODO
 t_log* iniciar_logger(void)
 {
-
+	return log_create("tp0.log", "tp0", 1, LOG_LEVEL_INFO);
 }
 
 //TODO
 t_config* leer_config(void)
 {
-
+	return config_create("tp0.config");
 }
 
 //TODO
 void terminar_programa(int conexion, t_log* logger, t_config* config)
 {
 	//Y por ultimo, para cerrar, hay que liberar lo que utilizamos (conexion, log y config) con las funciones de las commons y del TP mencionadas en el enunciado
+	log_destroy(logger);
+	config_destroy(config);
 }
