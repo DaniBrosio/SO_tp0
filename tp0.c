@@ -6,7 +6,6 @@
  */
 
 #include "tp0.h"
-#include <string.h>
 
 int main(void)
 {
@@ -14,6 +13,7 @@ int main(void)
 	int conexion;
 	char* ip;
 	char* puerto;
+	char* respuesta;
 
 	t_log* logger;
 	t_config* config;
@@ -29,17 +29,20 @@ int main(void)
 	strcpy(ip, config_get_string_value(config,"IP"));
 	strcpy(puerto, config_get_string_value(config,"PUERTO"));
 
-	printf("ip: %s\tpuerto: %s",ip,puerto);
+	printf("Direccion: %s:%s", ip, puerto);
 
 	/*---------------------------------------------------PARTE 3-------------------------------------------------------------*/
 
 	//antes de continuar, tenemos que asegurarnos que el servidor esté corriendo porque lo necesitaremos para lo que sigue.
 
 	//crear conexion
+	conexion = crear_conexion(ip, puerto);
 
 	//enviar mensaje
+	enviar_mensaje("holis",conexion);
 
 	//recibir mensaje
+	respuesta = recibir_mensaje(conexion);
 
 	//loguear mensaje recibido
 
@@ -61,6 +64,7 @@ t_config* leer_config(void)
 void terminar_programa(int conexion, t_log* logger, t_config* config)
 {
 	//Y por ultimo, para cerrar, hay que liberar lo que utilizamos (conexion, log y config) con las funciones de las commons y del TP mencionadas en el enunciado
+	liberar_conexion(conexion);
 	log_destroy(logger);
 	config_destroy(config);
 }

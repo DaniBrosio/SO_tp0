@@ -14,7 +14,18 @@
  */
 void* serializar_paquete(t_paquete* paquete, int *bytes)
 {
+	*bytes = paquete->buffer->size + 2*sizeof(int);
 
+	void *stream = malloc(*bytes);
+	int offset = 0;
+
+	memcpy(stream + offset, &(paquete->codigo_operacion), sizeof(int));
+	offset += sizeof(int);
+	memcpy(stream + offset, &(paquete->buffer->size), sizeof(int));
+	offset += sizeof(int);
+	memcpy(stream + offset, paquete->buffer->stream, paquete->buffer->size);
+
+	return stream;
 }
 
 int crear_conexion(char *ip, char* puerto)
@@ -42,7 +53,20 @@ int crear_conexion(char *ip, char* puerto)
 //TODO
 void enviar_mensaje(char* mensaje, int socket_cliente)
 {
+	t_paquete* paquete = malloc(sizeof(t_paquete));
 
+	paquete->codigo_operacion = MENSAJE;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = strlen(mensaje) + 1;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	int* bytes_serializados;
+	void* serializado = serializar_paquete(paquete, bytes_serializados);
+
+	send(socket_cliente, serializado, *bytes_serializados, 0);
+
+	free(serializado);
+	eliminar_paquete(paquete);
 }
 
 //TODO
@@ -54,4 +78,11 @@ char* recibir_mensaje(int socket_cliente)
 void liberar_conexion(int socket_cliente)
 {
 	close(socket_cliente);
+}
+
+void eliminar_paquete(t_paquete* paquete)
+{
+	free(paquete->buffer->stream);
+	free(paquete->buffer);
+	free(paquete);
 }
