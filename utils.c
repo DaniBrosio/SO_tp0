@@ -58,7 +58,7 @@ void enviar_mensaje(char* mensaje, int socket_cliente)
 	paquete->codigo_operacion = MENSAJE;
 	paquete->buffer = malloc(sizeof(t_buffer));
 	paquete->buffer->size = strlen(mensaje) + 1;
-	paquete->buffer->stream = malloc(paquete->buffer->size);
+	paquete->buffer->stream = mensaje;
 
 	int bytes_serializados;
 	void* serializado = serializar_paquete(paquete, &bytes_serializados);
@@ -72,7 +72,18 @@ void enviar_mensaje(char* mensaje, int socket_cliente)
 //TODO
 char* recibir_mensaje(int socket_cliente)
 {
-//	recv(socket_cliente, void *buffer, sizeof() , MSG_WAITALL );
+	int cod_op;
+
+	recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL);
+
+	char * buffer;
+	int size;
+
+	recv(socket_cliente, &size, sizeof(int), MSG_WAITALL);
+	buffer = malloc(size);
+	recv(socket_cliente, buffer, size, MSG_WAITALL);
+
+	return buffer;
 }
 
 void liberar_conexion(int socket_cliente)
@@ -82,7 +93,6 @@ void liberar_conexion(int socket_cliente)
 
 void eliminar_paquete(t_paquete* paquete)
 {
-	free(paquete->buffer->stream);
 	free(paquete->buffer);
 	free(paquete);
 }

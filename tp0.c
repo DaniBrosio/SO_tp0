@@ -13,7 +13,7 @@ int main(void)
 	int conexion;
 	char* ip;
 	char* puerto;
-	char* respuesta;
+	char* respuesta = NULL;
 
 	t_log* logger;
 	t_config* config;
@@ -43,7 +43,8 @@ int main(void)
 
 	//recibir mensaje
 	respuesta = recibir_mensaje(conexion);
-	log_info(logger,"<respuesta>");
+
+	log_info(logger,respuesta);
 
 	//loguear mensaje recibido
 
