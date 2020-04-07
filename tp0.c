@@ -21,13 +21,13 @@ int main(void)
 	logger = iniciar_logger();
 
 	//Loggear "soy un log"
-	log_trace(logger,"soy un log");
+	log_info(logger,"soy un log");
 
 	config = leer_config();
 
 	//Aplicar configuraciones
-	strcpy(ip, config_get_string_value(config,"IP"));
-	strcpy(puerto, config_get_string_value(config,"PUERTO"));
+	ip = config_get_string_value(config,"IP");
+	puerto = config_get_string_value(config,"PUERTO");
 
 	printf("Direccion: %s:%s", ip, puerto);
 
@@ -43,6 +43,7 @@ int main(void)
 
 	//recibir mensaje
 	respuesta = recibir_mensaje(conexion);
+	log_info(logger,"<respuesta>");
 
 	//loguear mensaje recibido
 
